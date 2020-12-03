@@ -2,6 +2,7 @@
 import os
 import requests
 import json
+import shutil
 
 url = 'https://screeps.com/api/user/code'
 headers = {'X-Token':'f655c370-9cbb-4fb4-aab4-ab264744fb11'}
@@ -38,7 +39,20 @@ def upload():
 
 def download():
     r = requests.get(url=url, headers=headers)
-    print(json.loads(r.text))
+    if not r.ok:
+        print(r.text)
+    data = json.loads(r.text)
+    rootdir = 'src/' + data['branch']
+    if os.path.isdir(rootdir):
+        shutil.rmtree(rootdir)
+    os.mkdir(rootdir)
+    for k in data['modules'].keys():
+        fname = k.replace('.', '/')
+        fname = rootdir + '/' + fname + '.js'
+        os.makedirs(os.path.dirname(fname), exist_ok=True)
+        f = open(fname, 'w')
+        f.write(data['modules'][k])
+        f.close()
 
 download()
 # upload()
