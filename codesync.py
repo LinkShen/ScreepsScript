@@ -1,5 +1,6 @@
 
 import os
+import sys
 import requests
 import json
 import shutil
@@ -54,5 +55,7 @@ def download():
         f.write(data['modules'][k])
         f.close()
 
-download()
-# upload()
+if sys.argv[1] == 'upload':
+    upload()
+elif sys.argv[1] == 'download':
+    download()
